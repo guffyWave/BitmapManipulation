@@ -71,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
 
                 if (source1 != null && source2 != null) {
-                    Bitmap processedBitmap = processBitmap();
+                    Bitmap processedBitmap = processBitmap(false);
                     if (processedBitmap != null) {
                         imageResult.setImageBitmap(processedBitmap);
 
@@ -136,7 +136,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private Bitmap processBitmap() {
+    private Bitmap processBitmap(boolean isJoinHorizontally) {
         Bitmap bm1 = null;
         Bitmap bm2 = null;
         Bitmap newBitmap = null;
@@ -146,14 +146,24 @@ public class MainActivity extends AppCompatActivity {
                     getContentResolver().openInputStream(source1));
             bm2 = BitmapFactory.decodeStream(
                     getContentResolver().openInputStream(source2));
-
-            int w = bm1.getWidth() + bm2.getWidth();
+            int w;
             int h;
-            if (bm1.getHeight() >= bm2.getHeight()) {
-                h = bm1.getHeight();
+            if (isJoinHorizontally == true) {
+                w = bm1.getWidth() + bm2.getWidth();
+                if (bm1.getHeight() >= bm2.getHeight()) {
+                    h = bm1.getHeight();
+                } else {
+                    h = bm2.getHeight();
+                }
             } else {
-                h = bm2.getHeight();
+                h = bm1.getHeight() + bm2.getHeight();
+                if (bm1.getWidth() >= bm2.getWidth()) {
+                    w = bm1.getWidth();
+                } else {
+                    w = bm2.getWidth();
+                }
             }
+
 
             Bitmap.Config config = bm1.getConfig();
             if (config == null) {
@@ -164,15 +174,17 @@ public class MainActivity extends AppCompatActivity {
             Canvas newCanvas = new Canvas(newBitmap);
 
             newCanvas.drawBitmap(bm1, 0, 0, null);
-            newCanvas.drawBitmap(bm2, bm1.getWidth(), 0, null);
+            if (isJoinHorizontally == true) {
+                newCanvas.drawBitmap(bm2, bm1.getWidth(), 0, null);
+            } else {
+                newCanvas.drawBitmap(bm2, 0, bm1.getWidth(), null);
+            }
 
         } catch (FileNotFoundException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
-
         return newBitmap;
     }
 
-
+    
 }

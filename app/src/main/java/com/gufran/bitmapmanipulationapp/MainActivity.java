@@ -177,7 +177,7 @@ public class MainActivity extends AppCompatActivity {
             if (isJoinHorizontally == true) {
                 newCanvas.drawBitmap(bm2, bm1.getWidth(), 0, null);
             } else {
-                newCanvas.drawBitmap(bm2, 0, bm1.getWidth(), null);
+                newCanvas.drawBitmap(bm2, 0, bm1.getHeight(), null);
             }
 
         } catch (FileNotFoundException e) {

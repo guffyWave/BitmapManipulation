@@ -5,7 +5,6 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
-import android.graphics.Typeface;
 
 /**
  * Created by gufran on 8/2/16.
@@ -43,7 +42,6 @@ public class ImageManipulationUtil {
         return mainBitMap;
     }
 
-
     public Bitmap generateUserInfoBitmap(int w, int h, Bitmap bitmapUser, NameTextConfiguration nameTextConfiguration, PhoneTextConfiguration phoneTextConfiguration, EmailTextConfiguration emailTextConfiguration) {
         Bitmap mainBitMap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
         final Canvas canvas = new Canvas(mainBitMap);
@@ -57,7 +55,7 @@ public class ImageManipulationUtil {
         //----->>creating user image
         Paint userImagePaint = new Paint();
         userImagePaint.setAntiAlias(true);
-        bitmapUser = scaleDown(bitmapUser, (int) (0.80 * h), true);//scale down image to 60% of the height of canvas
+        bitmapUser = scaleDown(bitmapUser, (int) (0.70 * h), true);//scale down image to 60% of the height of canvas
         int userImagePosX = (int) (0.2 * w) - bitmapUser.getWidth() / 2;// 20% of width-half of bmp width
         int userImagePosY = (int) (0.5 * h) - bitmapUser.getHeight() / 2;// 50 % of height-half of bmp height
         canvas.drawBitmap(bitmapUser, userImagePosX, userImagePosY, userImagePaint);
@@ -68,9 +66,11 @@ public class ImageManipulationUtil {
         if (nameTextConfiguration != null) {
             namePaint.setColor(nameTextConfiguration.getColor());
             namePaint.setTextSize(nameTextConfiguration.getSize());
-            namePaint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
+            if (emailTextConfiguration.getTypeface() != null)
+                namePaint.setTypeface(nameTextConfiguration.getTypeface());
+            // namePaint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
             int posX = (int) (0.40 * w);// 40% of width
-            int posY = (int) (0.25 * h);// 25% of height
+            int posY = (int) (0.35 * h);// 25% of height
             canvas.drawText(nameTextConfiguration.getText(), posX, posY, namePaint);
         }
 
@@ -81,8 +81,10 @@ public class ImageManipulationUtil {
         if (phoneTextConfiguration != null) {
             phoneNumberPaint.setColor(phoneTextConfiguration.getColor());
             phoneNumberPaint.setTextSize(phoneTextConfiguration.getSize());
+            if (phoneTextConfiguration.getTypeface() != null)
+                phoneNumberPaint.setTypeface(phoneTextConfiguration.getTypeface());
             int phonePosX = (int) (0.40 * w);// 40% of width
-            int phonePosY = (int) (0.50 * h);// 50% of height
+            int phonePosY = (int) (0.60 * h);// 50% of height
             canvas.drawText(phoneTextConfiguration.getText(), phonePosX, phonePosY, phoneNumberPaint);
         }
 
@@ -92,8 +94,10 @@ public class ImageManipulationUtil {
         if (emailTextConfiguration != null) {
             emailPaint.setColor(emailTextConfiguration.getColor());
             emailPaint.setTextSize(emailTextConfiguration.getSize());
+            if (emailTextConfiguration.getTypeface() != null)
+                emailPaint.setTypeface(emailTextConfiguration.getTypeface());
             int emailPosX = (int) (0.40 * w);// 40% of width
-            int emailPosY = (int) (0.70 * h);// 70% of height
+            int emailPosY = (int) (0.80 * h);// 70% of height
             canvas.drawText(emailTextConfiguration.getText(), emailPosX, emailPosY, emailPaint);
         }
 
@@ -113,5 +117,43 @@ public class ImageManipulationUtil {
         Bitmap newBitmap = Bitmap.createScaledBitmap(realImage, width,
                 height, filter);
         return newBitmap;
+    }
+
+    public Bitmap generateJoinedFooter(Bitmap footerInfo, Bitmap footerUser, boolean isJoinHorizontally) {
+        Bitmap joinedBitmap = null;
+
+        int w;
+        int h;
+        if (isJoinHorizontally == true) {
+            w = footerInfo.getWidth() + footerUser.getWidth();
+            if (footerInfo.getHeight() >= footerUser.getHeight()) {
+                h = footerInfo.getHeight();
+            } else {
+                h = footerUser.getHeight();
+            }
+        } else {
+            h = footerInfo.getHeight() + footerUser.getHeight();
+            if (footerInfo.getWidth() >= footerUser.getWidth()) {
+                w = footerInfo.getWidth();
+            } else {
+                w = footerUser.getWidth();
+            }
+        }
+
+        Bitmap.Config config = footerUser.getConfig();
+        if (config == null) {
+            config = Bitmap.Config.ARGB_8888;
+        }
+
+        joinedBitmap = Bitmap.createBitmap(w, h, config);
+        Canvas newCanvas = new Canvas(joinedBitmap);
+
+        newCanvas.drawBitmap(footerInfo, 0, 0, null);
+        if (isJoinHorizontally == true) {
+            newCanvas.drawBitmap(footerUser, footerInfo.getWidth(), 0, null);
+        } else {
+            newCanvas.drawBitmap(footerUser, 0, footerInfo.getHeight(), null);
+        }
+        return joinedBitmap;
     }
 }

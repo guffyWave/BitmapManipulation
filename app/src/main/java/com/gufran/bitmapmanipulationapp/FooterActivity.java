@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -39,11 +40,20 @@ public class FooterActivity extends AppCompatActivity {
     Uri sourceImageUri;
     Bitmap sourceBitmap;
 
+    EditText nameEditText, phoneEditText, emailEditText;
+
+    String name = "Gufran Khurshid";
+    String phone = "+91 7042935653";
+    String email = "gufran.khurshid@okutech.in";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_footer);
         imageView = (ImageView) findViewById(R.id.imageView);
+        nameEditText = (EditText) findViewById(R.id.nameEditText);
+        phoneEditText = (EditText) findViewById(R.id.phoneEditText);
+        emailEditText = (EditText) findViewById(R.id.emailEditText);
     }
 
     public void browseAndGenerate(View v) {
@@ -62,12 +72,20 @@ public class FooterActivity extends AppCompatActivity {
                     generateFinalImage();
                     break;
             }
-
         }
     }
 
     public void generateFinalImage() {
         if (sourceImageUri != null) {
+
+            if (!nameEditText.getText().toString()
+                    .equals("")) name = nameEditText.getText().toString();
+            if (!phoneEditText.getText().toString()
+                    .equals("")) phone = phoneEditText.getText().toString();
+            if (!emailEditText.getText().toString()
+                    .equals("")) email = emailEditText.getText().toString();
+
+
             ImageManipulationUtil imu = new ImageManipulationUtil();
             try {
                 sourceBitmap = BitmapFactory.decodeStream(
@@ -106,19 +124,20 @@ public class FooterActivity extends AppCompatActivity {
 
 
         //--->Name Configuration
-        NameTextConfiguration nameTextConfiguration = new NameTextConfiguration(getApplicationContext(), "Gufran Khurshid");
+        NameTextConfiguration nameTextConfiguration = new NameTextConfiguration(getApplicationContext(), name
+        );
         nameTextConfiguration.setSize((int) (0.25 * footerHeight));
         nameTextConfiguration.setColor(Color.DKGRAY);
         nameTextConfiguration.setTypeface(Typeface.createFromAsset(getAssets(), "fonts/Roboto-Medium.ttf"));
 
         //--->Phone Configuration
-        PhoneTextConfiguration phoneTextConfiguration = new PhoneTextConfiguration(getApplicationContext(), "+91 7042935653");
+        PhoneTextConfiguration phoneTextConfiguration = new PhoneTextConfiguration(getApplicationContext(), phone);
         phoneTextConfiguration.setSize((int) (0.15 * footerHeight));
         phoneTextConfiguration.setColor(Color.DKGRAY);
         phoneTextConfiguration.setTypeface(Typeface.createFromAsset(getAssets(), "fonts/Roboto-Light.ttf"));
 
         //--->Email Configuration
-        EmailTextConfiguration emailTextConfiguration = new EmailTextConfiguration(getApplicationContext(), "gufran.khurshid@gmail.com");
+        EmailTextConfiguration emailTextConfiguration = new EmailTextConfiguration(getApplicationContext(), email);
         emailTextConfiguration.setSize((int) (0.15 * footerHeight));
         emailTextConfiguration.setColor(Color.DKGRAY);
         emailTextConfiguration.setTypeface(Typeface.createFromAsset(getAssets(), "fonts/Roboto-Light.ttf"));
